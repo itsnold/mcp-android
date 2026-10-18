@@ -147,20 +147,10 @@ class McpServer(private val context: Context) {
                             Log.d(TAG, "Response length: ${sessions.toString().length} bytes")
                         }
                         
-                        // Main MCP SSE endpoint
-                        sse("/sse") {
-                            Log.i(TAG, "=== SSE CONNECTION ===")
-                            Log.i(TAG, "New SSE connection established")
-                            Log.i(TAG, "Remote address: ${call.request.local.remoteHost}")
-                            Log.i(TAG, "User agent: ${call.request.headers["User-Agent"] ?: "unknown"}")
-                            handleMcpSession(this)
-                        }
-                        
-                        // Alternative MCP endpoint for compatibility
-                        mcp("/mcp") {
-                            createMcpServer()
-                        }
                     }
+                    // SDK-managed SSE session and POST routes (/sse and /message).
+                    // Do not use the custom keep-alive-only SSE handler above.
+                    mcp { createMcpServer() }
                 }.start(wait = false)
                 isRunning = true
                 

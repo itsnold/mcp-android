@@ -368,7 +368,7 @@ fun McpServerStatus(
                     )
                     
                     Text(
-                        text = "Local MCP endpoint:\nhttp://127.0.0.1:8081/mcp",
+                        text = "Local MCP SSE endpoint:\nhttp://127.0.0.1:8081/sse",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Monospace,
                         color = Color(0xFF00FF00),
