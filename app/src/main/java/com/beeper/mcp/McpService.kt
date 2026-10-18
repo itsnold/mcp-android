@@ -158,16 +158,18 @@ class McpService : Service() {
     
     fun getServiceStatus(): ServiceStatus {
         return ServiceStatus(
-            isRunning = (mcpServer != null),
+            isRunning = (mcpServer?.isRunning == true),
             serviceName = serviceName,
-            localIpAddress = localIpAddress
+            localIpAddress = "127.0.0.1",
+            error = mcpServer?.lastError
         )
     }
     
     data class ServiceStatus(
         val isRunning: Boolean,
         val serviceName: String,
-        val localIpAddress: String
+        val localIpAddress: String,
+        val error: String? = null
     )
     
     private fun createNotificationChannel() {

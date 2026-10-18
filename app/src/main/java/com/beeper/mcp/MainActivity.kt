@@ -38,6 +38,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -108,6 +110,12 @@ class MainActivity : ComponentActivity() {
         }
         
         setContent {
+            LaunchedEffect(Unit) {
+                while (true) {
+                    updateServiceStatus()
+                    delay(1000)
+                }
+            }
             BeeperMcpTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     McpServerStatus(
@@ -360,7 +368,7 @@ fun McpServerStatus(
                     )
                     
                     Text(
-                        text = "$ claude mcp add --transport sse \\\n  beeper-android \\\n  http://${serviceStatus.localIpAddress}:8081",
+                        text = "Local MCP endpoint:\nhttp://127.0.0.1:8081/mcp",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = FontFamily.Monospace,
                         color = Color(0xFF00FF00),
@@ -379,7 +387,8 @@ fun McpServerStatus(
         // Warning message
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "⚠️ Authentication not implemented",
+            text = serviceStatus.error?.let { "Server error: $it" }
+                ?: "Read-only · Localhost only · No token authentication",
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFFFF9800),
             textAlign = TextAlign.Center,

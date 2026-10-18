@@ -14,8 +14,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.install
 import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.netty.NettyApplicationEngine
+import io.ktor.server.cio.CIO
+import io.ktor.server.cio.CIOApplicationEngine
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
@@ -55,7 +55,11 @@ class McpServer(private val context: Context) {
     }
     
 
-    private var ktorServer: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>? = null
+    private var ktorServer: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
+    @Volatile var isRunning = false
+        private set
+    @Volatile var lastError: String? = null
+        private set
     private val activeSessions = ConcurrentHashMap<String, SessionInfo>()
     
     data class SessionInfo(
@@ -67,7 +71,8 @@ class McpServer(private val context: Context) {
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                ktorServer = embeddedServer(Netty, host = "127.0.0.1", port = PORT) {
+                lastError = null
+                ktorServer = embeddedServer(CIO, host = "127.0.0.1", port = PORT) {
                     // Install required features
                     install(SSE) {
                         // Configure SSE settings
@@ -157,6 +162,7 @@ class McpServer(private val context: Context) {
                         }
                     }
                 }.start(wait = false)
+                isRunning = true
                 
                 val ipAddress = getLocalIpAddress()
                 Log.i(TAG, "======================================")
@@ -173,6 +179,8 @@ class McpServer(private val context: Context) {
                 
                 
             } catch (e: Exception) {
+                isRunning = false
+                lastError = "${e.javaClass.simpleName}: ${e.message}"
                 Log.e(TAG, "======================================")
                 Log.e(TAG, "=== SERVER START FAILED ===")
                 Log.e(TAG, "======================================")
@@ -412,6 +420,7 @@ class McpServer(private val context: Context) {
     
     
     fun stop() {
+        isRunning = false
         try {
             // Clear active sessions
             activeSessions.clear()

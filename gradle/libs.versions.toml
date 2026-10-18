@@ -28,6 +28,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 mcp = { module = "io.modelcontextprotocol:kotlin-sdk-jvm", version = "0.6.0" }
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
+ktor-server-cio = { group = "io.ktor", name = "ktor-server-cio", version.ref = "ktor" }
 ktor-server-sse = { group = "io.ktor", name = "ktor-server-sse", version.ref = "ktor" }
 ktor-server-cors = { group = "io.ktor", name = "ktor-server-cors", version.ref = "ktor" }
 
@@ -35,4 +36,3 @@ ktor-server-cors = { group = "io.ktor", name = "ktor-server-cors", version.ref =
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-

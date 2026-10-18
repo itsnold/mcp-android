@@ -13,8 +13,8 @@ android {
         applicationId = "com.beeper.mcp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1-diagnostics"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -61,7 +61,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.mcp)
     implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.cio)
     implementation(libs.ktor.server.sse)
     implementation(libs.ktor.server.cors)
     testImplementation(libs.junit)
