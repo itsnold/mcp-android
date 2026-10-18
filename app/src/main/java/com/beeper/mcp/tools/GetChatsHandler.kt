@@ -49,7 +49,9 @@ fun ContentResolver.handleGetChats(request: CallToolRequest): CallToolResult {
         val queryUri = "content://$BEEPER_AUTHORITY/chats?$paginationParams".toUri()
         val chats = mutableListOf<Map<String, Any?>>()
         
-        query(queryUri, null, null, null, null)?.use { cursor ->
+        val resultCursor = query(queryUri, null, null, null, null)
+            ?: error("Beeper returned no cursor. The content provider may be unavailable or hidden; this does not mean your chat list is empty. Check Beeper version, read permission, and that both apps are in the same Android profile.")
+        resultCursor.use { cursor ->
             val roomIdIdx = cursor.getColumnIndex("roomId")
             val titleIdx = cursor.getColumnIndex("title")
             val previewIdx = cursor.getColumnIndex("messagePreview")
