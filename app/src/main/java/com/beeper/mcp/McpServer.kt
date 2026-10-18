@@ -74,9 +74,7 @@ class McpServer(private val context: Context) {
                 lastError = null
                 ktorServer = embeddedServer(CIO, host = "127.0.0.1", port = PORT) {
                     // Install required features
-                    install(SSE) {
-                        // Configure SSE settings
-                    }
+                    // Application.mcp installs SSE itself; do not install twice.
                     
                     install(CORS) {
                         allowMethod(HttpMethod.Options)
