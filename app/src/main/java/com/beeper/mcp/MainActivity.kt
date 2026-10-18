@@ -65,8 +65,7 @@ class MainActivity : ComponentActivity() {
     ))
     
     private val beeperPermissions = mutableListOf(
-        "com.beeper.android.permission.READ_PERMISSION",
-        "com.beeper.android.permission.SEND_PERMISSION"
+        "com.beeper.android.permission.READ_PERMISSION"
     ).apply {
         // Add notification permission for Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

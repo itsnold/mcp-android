@@ -67,7 +67,7 @@ class McpServer(private val context: Context) {
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                ktorServer = embeddedServer(Netty, port = PORT) {
+                ktorServer = embeddedServer(Netty, host = "127.0.0.1", port = PORT) {
                     // Install required features
                     install(SSE) {
                         // Configure SSE settings
@@ -262,12 +262,7 @@ class McpServer(private val context: Context) {
             context.contentResolver.handleGetContacts(request)
         }
         
-        server.addTool(
-            name = "send_message",
-            description = "Send a text message to a specific chat room. Requires room_id (the Matrix room ID like !roomId:server.com) and text (the message content). Returns success/failure status.",
-        ) { request ->
-            context.contentResolver.handleSendMessage(request)
-        }
+        // Read-only task extraction: deliberately do not expose sending.
         
         server.addTool(
             name = "get_messages",
