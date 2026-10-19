@@ -9,12 +9,17 @@ import java.io.File
 /** Report the location format, never the private path or URL query. */
 fun describeChatImageLocation(path: String): String {
     val uri = Uri.parse(path)
+    val scheme = uri.scheme?.takeIf { it.matches(Regex("[A-Za-z][A-Za-z0-9+.-]{0,31}")) }
+        ?: if (uri.scheme == null) "none" else "invalid/redacted"
     return when (uri.scheme) {
-        "content" -> "content URI (authority: ${uri.authority?.take(100)})"
+        "content" -> {
+            val authority = uri.host?.takeIf { it.matches(Regex("[A-Za-z0-9.:-]{1,253}")) } ?: "redacted"
+            "content URI (authority: $authority)"
+        }
         "file" -> "file URI"
         null -> if (File(path).isAbsolute) "absolute file path" else "relative path"
         "https", "http" -> "HTTP URL (not downloaded)"
-        else -> "unsupported URI scheme"
+        else -> "unsupported URI scheme: $scheme"
     }
 }
 

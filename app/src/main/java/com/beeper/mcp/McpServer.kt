@@ -285,6 +285,17 @@ class McpServer(private val context: Context) {
         ) { _ -> inspectMessageProvider(context) }
 
         server.addTool(
+            name = "inspect_chat_media",
+            description = "Inspect media location schemes and hosts from selected roomIds without returning message text, media paths/tokens, or image bytes. No network downloads. Required roomIds; limit defaults to 40 (max 100); offset defaults to 0.",
+            inputSchema = Tool.Input(properties = buildJsonObject {
+                put("roomIds", buildJsonObject { put("type", "string") })
+                listOf("limit", "offset").forEach { name ->
+                    put(name, buildJsonObject { put("type", "integer") })
+                }
+            }, required = listOf("roomIds"))
+        ) { request -> inspectChatMedia(context, request) }
+
+        server.addTool(
             name = "get_shared_image",
             description = "Read the latest screenshot explicitly shared and approved in Beeper MCP Screenshot. Returns actual image content for visual analysis, not OCR. Does not fetch Beeper message attachments. One image at a time; expires after 30 minutes or app restart. No parameters."
         ) { _ -> SharedScreenshot.result() }

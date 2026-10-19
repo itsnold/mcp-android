@@ -65,5 +65,8 @@ class SharedScreenshotTest {
         assertEquals("absolute file path", describeChatImageLocation("/data/user/0/com.beeper.android/private-name.jpg"))
         assertEquals("HTTP URL (not downloaded)", describeChatImageLocation("https://example.com/private-name.jpg?token=secret"))
         assertEquals("content URI (authority: com.beeper.api)", describeChatImageLocation("content://com.beeper.api/private-name.jpg?token=secret"))
+        assertEquals("content URI (authority: com.beeper.api)", describeChatImageLocation("content://user:secret@com.beeper.api/private-name.jpg?token=secret"))
+        assertEquals("unsupported URI scheme: mxc", describeChatImageLocation("mxc://example.com/private-id?token=secret"))
+        assertEquals("unsupported URI scheme: custom+media", describeChatImageLocation("custom+media://private-id"))
     }
 }

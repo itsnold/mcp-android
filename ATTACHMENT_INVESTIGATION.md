@@ -58,6 +58,22 @@ chat with an image. This is an attachment-reader candidate, not a verified fix.
 
 ## Diagnostic tool
 
+### Version 1.7 runtime test result
+
+Reading the latest 40 SYSDEV messages found the two IMAGE messages from Ralph
+on October 15 at 18:16. Both failed before decoding with IllegalStateException
+and "unsupported URI scheme". No image bytes were returned. This is not an
+Android permission-denied result, and does not yet identify the URI scheme.
+The original diagnostic hid it too aggressively; do not infer that these are
+local files, Matrix media, or any other specific format from this result.
+
+Version 1.8 reports the exact syntactically valid scheme in failure messages
+and adds `inspect_chat_media(roomIds, limit, offset)`, which reports media
+schemes and relevant hosts from explicitly selected chats without returning
+message text, media filenames, URL tokens, or bytes. It does not attempt any
+new resolver, cloud request, credential access, or permission bypass. Its purpose
+is to identify the actual media format before implementing another reader.
+
 Version 1.6 adds `inspect_message_provider`. It uses only the existing read
 permission and the documented messages query, requesting all columns, and
 reports the installed Beeper version plus actual column names and types from
