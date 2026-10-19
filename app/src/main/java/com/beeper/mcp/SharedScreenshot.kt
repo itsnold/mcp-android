@@ -12,6 +12,7 @@ import io.modelcontextprotocol.kotlin.sdk.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.ImageContent
 import io.modelcontextprotocol.kotlin.sdk.TextContent
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 
 /** Only the image explicitly shared and approved by the user; never scans photos. */
 object SharedScreenshot {
@@ -25,7 +26,12 @@ object SharedScreenshot {
 
     fun prepare(resolver: ContentResolver, uri: Uri): Image {
         require(uri.scheme == "content") { "Share an image using Android's Share menu." }
-        val raw = resolver.openInputStream(uri)?.use { input ->
+        return resolver.openInputStream(uri)?.use { prepareInput(it) }
+            ?: error("Cannot open the shared image. Please share it again.")
+    }
+
+    fun prepareInput(input: InputStream): Image {
+        val raw = run {
             val output = ByteArrayOutputStream()
             val buffer = ByteArray(8192)
             while (true) {
@@ -35,7 +41,7 @@ object SharedScreenshot {
                 output.write(buffer, 0, n)
             }
             output.toByteArray()
-        } ?: error("Cannot open the shared image. Please share it again.")
+        }
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeByteArray(raw, 0, raw.size, bounds)
         require(bounds.outWidth > 0 && bounds.outHeight > 0) { "This file is not a supported image." }

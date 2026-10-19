@@ -13,8 +13,8 @@ android {
         applicationId = "com.beeper.mcp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.6-provider-diagnostics"
+        versionCode = 8
+        versionName = "1.7-chat-images"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

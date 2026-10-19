@@ -31,7 +31,32 @@ content alongside the text, without manually sharing screenshots.
   same local conversations or their media.
   https://developers.beeper.com/bridges
 
-## Runtime check still required
+## Runtime result: Beeper Android 4.61.1
+
+The user's installed version was inspected through the diagnostic tool. In
+addition to the documented columns it returns `image_path`, `image_width`,
+`image_height`, `video_path`, `video_width`, `video_height`, and `order`.
+The five sampled rows had null image paths; no attachment location or image
+bytes have been verified yet. The docs alone were not sufficient to rule out
+automatic Android attachments.
+
+Version 1.7 adds bounded image reads to `get_messages` for explicitly selected
+`roomIds`: `includeImages` defaults to true, `maxImages` to 2 (cap 3), and the
+combined base64 image payload is limited to 8 MiB. The tool now advertises its
+filter/pagination/image parameters in its input schema. It returns attributed
+MCP ImageContent only when the Beeper-supplied location can actually be read.
+Deleted messages and global-inbox queries never trigger image reads. Text and
+image captions remain available even when image access fails.
+
+Only Beeper content authorities and canonical paths inside Beeper's expected
+storage roots are attempted, using ordinary Android permission checks. No
+arbitrary HTTP downloads, path rewriting, sandbox bypass, or broad photo
+permissions are used. Failures report the location format (and content URI
+authority), not private filenames or tokens. Actual location accessibility and
+delivery into the model's context still require installation and a selected
+chat with an image. This is an attachment-reader candidate, not a verified fix.
+
+## Diagnostic tool
 
 Version 1.6 adds `inspect_message_provider`. It uses only the existing read
 permission and the documented messages query, requesting all columns, and
@@ -46,8 +71,8 @@ then implement bounded fetching of images from the selected rooms/messages and
 return MCP ImageContent with source attribution. Cap image size and image count;
 never attach every photo from every conversation automatically.
 
-If only the documented fields exist, automatic attachments remain blocked on
-the provider interface. Next supported paths are an upstream Android media API
+If returned paths cannot be read under Android permissions, automatic attachments
+remain blocked on an accessible provider interface. Next supported paths are an upstream Android media API
 request or a separately authorized Desktop/remote deployment. Neither has been
 set up or filed by this investigation.
 
