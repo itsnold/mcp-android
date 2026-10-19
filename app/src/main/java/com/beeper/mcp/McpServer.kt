@@ -268,6 +268,11 @@ class McpServer(private val context: Context) {
         }
         
         server.addTool(
+            name = "inspect_message_provider",
+            description = "Read-only diagnostics: inspect the installed Beeper version and actual message cursor column names/types. Never returns message values or attachment bytes. Use to investigate whether this version exposes undocumented media fields. No parameters."
+        ) { _ -> inspectMessageProvider(context) }
+
+        server.addTool(
             name = "get_shared_image",
             description = "Read the latest screenshot explicitly shared and approved in Beeper MCP Screenshot. Returns actual image content for visual analysis, not OCR. Does not fetch Beeper message attachments. One image at a time; expires after 30 minutes or app restart. No parameters."
         ) { _ -> SharedScreenshot.result() }
