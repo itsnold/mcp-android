@@ -23,7 +23,7 @@ jobs:
         with:
           gradle-version: '8.13'
       - name: Build APK
-        run: gradle assembleDebug --no-daemon
+        run: gradle assembleDebug assembleDebugAndroidTest --no-daemon
       - name: Checksum
         run: sha256sum app/build/outputs/apk/debug/app-debug.apk > app/build/outputs/apk/debug/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4

@@ -126,7 +126,10 @@ class MainActivity : ComponentActivity() {
                         onRequestPermissions = { requestBeeperPermissions() },
                         onRequestBatteryOptimization = { requestBatteryOptimizationExemption() },
                         onStartService = { startMcpService() },
-                        onStopService = { stopMcpService() }
+                        onStopService = { stopMcpService() },
+                        onOpenScreenshotInbox = {
+                            startActivity(Intent(this@MainActivity, ShareScreenshotActivity::class.java))
+                        }
                     )
                 }
             }
@@ -282,7 +285,8 @@ fun McpServerStatus(
     onRequestPermissions: () -> Unit = {},
     onRequestBatteryOptimization: () -> Unit = {},
     onStartService: () -> Unit = {},
-    onStopService: () -> Unit = {}
+    onStopService: () -> Unit = {},
+    onOpenScreenshotInbox: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.padding(16.dp)
@@ -394,6 +398,9 @@ fun McpServerStatus(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
+        Text("To read screenshots: Share one image to Beeper MCP Screenshot, approve it, then ask OpenCode to read the shared screenshot.",
+            modifier = Modifier.padding(top = 12.dp), style = MaterialTheme.typography.bodySmall)
+        OutlinedButton(onClick = onOpenScreenshotInbox) { Text("Manage shared screenshot") }
     }
 }
 
