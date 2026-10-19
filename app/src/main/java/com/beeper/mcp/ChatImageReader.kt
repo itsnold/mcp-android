@@ -32,7 +32,7 @@ fun readChatImage(resolver: ContentResolver, path: String): ImageContent {
                 uri.authority?.startsWith("com.beeper.android.") == true) {
                 "Beeper returned a content URI outside its known providers; not opened."
             }
-            resolver.openInputStream(uri)?.use { SharedScreenshot.prepareInput(it) }
+            resolver.openInputStream(uri)?.use { ChatImageDecoder.prepareInput(it) }
                 ?: error("Beeper media provider returned no image stream.")
         }
         null, "file" -> {
@@ -45,7 +45,7 @@ fun readChatImage(resolver: ContentResolver, path: String): ImageContent {
             require(file.isAbsolute && permitted.any { file.path.startsWith(it) }) {
                 "Beeper returned a local image path outside its expected storage; not opened."
             }
-            file.inputStream().use { SharedScreenshot.prepareInput(it) }
+            file.inputStream().use { ChatImageDecoder.prepareInput(it) }
         }
         else -> error("Beeper returned a ${uri.scheme} media location, not an accessible Android image URI. No external download attempted.")
     }

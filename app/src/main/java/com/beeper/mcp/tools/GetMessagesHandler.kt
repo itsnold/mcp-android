@@ -9,9 +9,6 @@ import io.modelcontextprotocol.kotlin.sdk.TextContent
 import kotlinx.serialization.json.jsonPrimitive
 import androidx.core.net.toUri
 import com.beeper.mcp.BEEPER_AUTHORITY
-import com.beeper.mcp.readChatImage
-import com.beeper.mcp.describeChatImageLocation
-import io.modelcontextprotocol.kotlin.sdk.PromptMessageContent
 
 private const val TAG = "GetMessagesHandler"
 
@@ -30,13 +27,11 @@ fun ContentResolver.handleGetMessages(request: CallToolRequest): CallToolResult 
             request.arguments.get("openAtUnread")?.jsonPrimitive?.content?.toBoolean() ?: false
         val limit = (request.arguments.get("limit")?.jsonPrimitive?.content?.toIntOrNull() ?: 100).coerceIn(1, 100)
         val offset = (request.arguments.get("offset")?.jsonPrimitive?.content?.toIntOrNull() ?: 0).coerceAtLeast(0)
-        val includeImages = request.arguments["includeImages"]?.jsonPrimitive?.content?.toBooleanStrictOrNull() ?: true
-        val maxImages = (request.arguments["maxImages"]?.jsonPrimitive?.content?.toIntOrNull() ?: 2).coerceIn(0, 3)
 
         Log.i(TAG, "=== TOOL REQUEST: get_messages ===")
         Log.i(
             TAG,
-            "Pagination: limit=$limit, offset=$offset; includeImages=$includeImages, maxImages=$maxImages"
+            "Pagination: limit=$limit, offset=$offset"
         )
         Log.i(TAG, "Start time: $startTime")
 
@@ -249,6 +244,14 @@ fun ContentResolver.handleGetMessages(request: CallToolRequest): CallToolResult 
         Log.i(TAG, "Result length: ${result.length} characters")
         Log.i(TAG, "Status: SUCCESS")
 
+        /*
+         * Image resolving intentionally disabled for the interim text-only build.
+         * Beeper returns mxc://local.beeper.com identifiers; no working Android
+         * resolver has been verified. Keep this implementation for future work,
+         * but do not attempt media access or return misleading image errors.
+         * Restoring it requires the image imports and tool schema parameters too.
+        val includeImages = request.arguments["includeImages"]?.jsonPrimitive?.content?.toBooleanStrictOrNull() ?: true
+        val maxImages = (request.arguments["maxImages"]?.jsonPrimitive?.content?.toIntOrNull() ?: 2).coerceIn(0, 3)
         val multimodal = mutableListOf<PromptMessageContent>(TextContent(text = result))
         val candidates = messages.filter { it["type"] == "IMAGE" && it["isDeleted"] != true }
         if (includeImages && candidates.isNotEmpty()) {
@@ -281,8 +284,9 @@ fun ContentResolver.handleGetMessages(request: CallToolRequest): CallToolResult 
                 if (candidates.size > maxImages) multimodal.add(TextContent(text = "${candidates.size - maxImages} additional image messages omitted from this page. Narrow limit/offset or use maxImages up to 3 to inspect them."))
             }
         }
+        */
         CallToolResult(
-            content = multimodal,
+            content = listOf(TextContent(text = result)),
             isError = false
         )
 

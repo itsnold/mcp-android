@@ -3,6 +3,16 @@
 Requirement: when a selected chat is read, its images should arrive as image
 content alongside the text, without manually sharing screenshots.
 
+## Current interim build: 1.9-text-only
+
+At the user's request, investigation is paused. Automatic image resolving in
+`get_messages` is commented out; results contain text, captions, and type
+placeholders only. Image parameters are no longer advertised. The screenshot
+management UI, share-target activity, shared-image tool, and screenshot inbox
+state have been removed. The standalone decoder/reader and read-only metadata
+diagnostics are retained for possible future work, not active image retrieval.
+No Beeper reverse engineering or app replacement has been performed.
+
 ## Confirmed from public interfaces
 
 - The official Android messages provider documentation lists roomId, originalId,
@@ -57,6 +67,38 @@ delivery into the model's context still require installation and a selected
 chat with an image. This is an attachment-reader candidate, not a verified fix.
 
 ## Diagnostic tool
+
+### Version 1.8 runtime result: exact source format identified
+
+`inspect_chat_media` was run on the latest 40 SYSDEV messages. The two image
+locations at message positions 6 and 7 are both **mxc://local.beeper.com/...**.
+These are Matrix-style media identifiers, not Android filesystem paths or
+content URIs. No full media identifier, token, or image byte was returned by
+the inspection, and no URI was rewritten into a speculative download URL.
+
+The current reader cannot resolve them. This is a missing media resolver,
+not a demonstrated Android read-permission failure. The identifier alone does
+not show whether media is encrypted, downloaded locally, or cloud-accessible.
+
+Follow-up research found no documented Android resolver in the current official
+API reference or integration guide. This does not prove no undocumented one
+exists. Beeper's Desktop API explicitly supports mxc/localmxc asset resolution
+through `/v1/assets/serve` and asset download APIs. That is a separate Desktop
+service, not an Android endpoint. The community beeper-cli image pipeline also
+uses a Desktop database and beepcli; it is not a phone-only alternative.
+
+Sources checked:
+- https://developers.beeper.com/android/content-providers/api-reference
+- https://developers.beeper.com/android/content-providers/integration-guide
+- https://developers.beeper.com/desktop-api/changelog/
+- https://github.com/KrauseFx/beeper-cli/blob/master/analyze-images.sh
+
+Automatic chat images remain unverified/nonfunctional for these messages.
+Do not produce another reader APK merely by guessing a resolver. The next
+useful step is to obtain Beeper's supported Android method for resolving these
+provider-returned MXC references under READ_PERMISSION, or confirmation that
+the interface needs an upstream feature. The official integration guide lists
+info@beeper.com for integration support. No email or public issue was sent.
 
 ### Version 1.7 runtime test result
 

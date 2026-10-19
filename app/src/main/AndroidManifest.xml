@@ -39,18 +39,6 @@
             </intent-filter>
         </activity>
         
-        <activity
-            android:name=".ShareScreenshotActivity"
-            android:exported="true"
-            android:label="Beeper MCP Screenshot"
-            android:theme="@style/Theme.Beepermcp">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
-        </activity>
-
         <service
             android:name=".McpService"
             android:enabled="true"

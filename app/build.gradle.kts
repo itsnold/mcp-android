@@ -13,8 +13,8 @@ android {
         applicationId = "com.beeper.mcp"
         minSdk = 26
         targetSdk = 36
-        versionCode = 9
-        versionName = "1.8-media-diagnostics"
+        versionCode = 10
+        versionName = "1.9-text-only"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
